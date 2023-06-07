@@ -58,8 +58,8 @@ const errorLogger = createLogger({
         process.cwd(),
         'logs',
         'winston',
-        'success',
-        'ph-%DATE%-success.log'
+        'error',
+        'ph-%DATE%-error.log'
       ),
       datePattern: 'YYYY-DD-MM-HH',
       zippedArchive: true,
