@@ -7,8 +7,9 @@ import API_Error from '../errors/ApiError'
 import { errorLogger } from '../../shared/logger'
 import { ZodError } from 'zod'
 import handleZodError from '../errors/handleZodError'
+import handleCastError from '../errors/handleCastError'
 
-const globalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+const globalErrorHandler: ErrorRequestHandler = (err, _req, res) => {
   let statusCode = 500
   let message = 'Something went wrong!'
   let errorMessages: IGenericErrorMessage[] = []
@@ -37,6 +38,13 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     message = simplifiedError?.message
     errorMessages = simplifiedError?.errorMessages
   }
+  // CAST ERROR HANDEL
+  else if (err?.name === 'CastError') {
+    const simplifiedError = handleCastError(err)
+    statusCode = simplifiedError?.statusCode
+    message = simplifiedError?.message
+    errorMessages = simplifiedError?.errorMessages
+  }
 
   // CUSTOM ERROR
   else if (err instanceof Error) {
@@ -51,8 +59,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     errorMessages,
     stack: config.env !== 'production' ? err.message : undefined,
   })
-
-  next()
 }
 
 export default globalErrorHandler
