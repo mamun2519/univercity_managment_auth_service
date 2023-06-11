@@ -33,6 +33,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res) => {
   }
   // ZOD VALIDATION ERROR HANDLE
   else if (err instanceof ZodError) {
+    console.log('This is errorrrrrr')
     const simplifiedError = handleZodError(err)
     statusCode = simplifiedError?.statusCode
     message = simplifiedError?.message

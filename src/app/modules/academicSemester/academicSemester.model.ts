@@ -39,7 +39,12 @@ const academicSemesterSchema = new Schema<IAcademicSemester>(
       enum: academicSemesterMonths,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
 )
 
 // HANDLE SAME YEAR AND SAME SEMESTER ISSUE
