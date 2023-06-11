@@ -5,7 +5,11 @@ import { AcademicFacultyValidation } from './academicFaculty.validation'
 const router = express.Router()
 
 router.delete('/:id', AcademicFacultyController.deleteFaculty)
-router.patch('/:id', AcademicFacultyController.patchFaculty)
+router.patch(
+  '/:id',
+  validateRequest(AcademicFacultyValidation.updateAcademicFacultyZodSchema),
+  AcademicFacultyController.patchFaculty
+)
 router.get('/:id', AcademicFacultyController.getSingleFaculty)
 router.get('/', AcademicFacultyController.getAllFaculty)
 router.post(
