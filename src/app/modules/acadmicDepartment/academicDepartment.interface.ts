@@ -13,4 +13,6 @@ export type IAcademicDepartmentModel = Model<
 
 export type IAcademicDepartmentFilters = {
   searchTerm: string
+  title: string
+  academicFaculty: string
 }

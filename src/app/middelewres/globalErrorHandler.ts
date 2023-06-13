@@ -9,7 +9,8 @@ import { ZodError } from 'zod'
 import handleZodError from '../errors/handleZodError'
 import handleCastError from '../errors/handleCastError'
 
-const globalErrorHandler: ErrorRequestHandler = (err, _req, res) => {
+// eslint-disable-next-line no-unused-vars
+const globalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   let statusCode = 500
   let message = 'Something went wrong!'
   let errorMessages: IGenericErrorMessage[] = []
