@@ -98,7 +98,6 @@ const updateFacultyFromDB = async (
 }
 const deleteFacultyFromDB = async (id: string) => {
   const user = await User.findOne({ id })
-
   const faculty = await Faculty.findOne({ id })
 
   if (!user || !faculty) {

@@ -4,12 +4,14 @@ import { AcademicSemester } from '../academicSemester/academicSemester.model'
 import { IStudent } from '../student/student.interface'
 import { IUser } from './interface'
 import { User } from './models'
-import { generateFacultyId, generateStudentId } from './utils'
+import { generateAdminId, generateFacultyId, generateStudentId } from './utils'
 import { Student } from '../student/student.model'
 import API_Error from '../../errors/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { IFaculty } from '../faculty/faculty.interface'
 import { Faculty } from '../faculty/faculty.model'
+import { IAdmin } from '../admin/admin.interface'
+import { Admin } from '../admin/admin.model'
 
 const createStudent = async (
   student: IStudent,
@@ -93,7 +95,6 @@ const createFaculty = async (
   try {
     session.startTransaction()
     const id = await generateFacultyId()
-    console.log(id)
 
     // set id
     user.id = id
@@ -101,7 +102,7 @@ const createFaculty = async (
 
     // create faculty
     const newFaculty = await Faculty.create([faculty], { session })
-    console.log(newFaculty)
+
     if (!newFaculty.length) {
       throw new API_Error(StatusCodes.BAD_REQUEST, 'Failed To create Faculty')
     }
@@ -136,7 +137,54 @@ const createFaculty = async (
   return userData
 }
 
+const createAdmin = async (
+  admin: IAdmin,
+  user: IUser
+): Promise<IUser | null> => {
+  if (!user.password) {
+    user.password = config.admin_default_pass as string
+  }
+  user.role = 'admin'
+
+  let createdUser = null
+  const session = await mongoose.startSession()
+  try {
+    session.startTransaction()
+    const id = await generateAdminId()
+    console.log(id)
+    user.id = id
+    admin.id = id
+
+    const createAdmin = await Admin.create([admin], { session })
+    if (!createAdmin.length) {
+      throw new API_Error(StatusCodes.BAD_REQUEST, 'failed to crate admin')
+    }
+    const createUser = await User.create([user], { session })
+    if (!createUser.length) {
+      throw new API_Error(StatusCodes.BAD_REQUEST, 'failed to crate admin')
+    }
+    createdUser = createUser[0]
+    await session.commitTransaction()
+    await session.endSession()
+  } catch (error) {
+    console.log(error)
+    await session.abortTransaction()
+    await session.endSession()
+    throw new API_Error(
+      StatusCodes.BAD_REQUEST,
+      'Transaction failed, Something is wrong!'
+    )
+  }
+  if (createdUser) {
+    createdUser = await User.findOne({ id: createdUser.id }).populate(
+      'managementDepartment'
+    )
+  }
+
+  return createdUser
+}
 export const UserService = {
   createStudent,
   createFaculty,
+  createAdmin,
 }

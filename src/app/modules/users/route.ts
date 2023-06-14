@@ -3,6 +3,7 @@ import { UserController } from './controller'
 import validateRequest from '../../middelewres/validateRequest'
 import { UserValidation } from './validation'
 import { FacultyValidation } from '../faculty/faculty.validation'
+import { AdminValidation } from '../admin/admin.validation'
 const router = express.Router()
 
 router.post(
@@ -19,4 +20,10 @@ router.post(
 )
 
 // crate admin
+
+router.post(
+  '/create-admin',
+  validateRequest(AdminValidation.createAdminZodSchema),
+  UserController.createAdmin
+)
 export const UserRoutes = router
