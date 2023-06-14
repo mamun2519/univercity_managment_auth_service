@@ -17,4 +17,4 @@ router.post(
   validateRequest(AcademicFacultyValidation.createAcademicFacultyZodSchema),
   AcademicFacultyController.createFaculty
 )
-export const FacultyRoute = router
+export const AcademicFacultyRoute = router

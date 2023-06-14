@@ -47,7 +47,7 @@ const deleteStudent = catchAsync(async (req: Request, res: Response) => {
 
 const updateStudent = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params
-  console.log(id)
+
   const { ...updatedData } = req.body
   const result = await StudentService.updateStudentToDB(id, updatedData)
   sendResponse<IStudent>(res, {

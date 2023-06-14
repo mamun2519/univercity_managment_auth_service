@@ -35,7 +35,7 @@ export async function findLastFacultyId(): Promise<string | undefined> {
   return lastFaculty?.id ? lastFaculty.id.substring(2) : undefined
 }
 
-export async function generateFacultyId(): Promise<string | undefined> {
+export async function generateFacultyId(): Promise<string> {
   const currentId =
     (await findLastFacultyId()) || (0).toString().padStart(5, '0') // 00000
   let incrementId = (parseInt(currentId) + 1).toString().padStart(5, '0') //0000

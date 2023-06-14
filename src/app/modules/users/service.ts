@@ -4,10 +4,12 @@ import { AcademicSemester } from '../academicSemester/academicSemester.model'
 import { IStudent } from '../student/student.interface'
 import { IUser } from './interface'
 import { User } from './models'
-import { generateStudentId } from './utils'
+import { generateFacultyId, generateStudentId } from './utils'
 import { Student } from '../student/student.model'
 import API_Error from '../../errors/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { IFaculty } from '../faculty/faculty.interface'
+import { Faculty } from '../faculty/faculty.model'
 
 const createStudent = async (
   student: IStudent,
@@ -74,6 +76,67 @@ const createStudent = async (
   return newUserAllData
 }
 
+const createFaculty = async (
+  faculty: IFaculty,
+  user: IUser
+): Promise<IUser | null> => {
+  // SET DEFAULT
+  if (!user.password) {
+    user.password = config.faculty_default_pass as string
+  }
+  // set role
+  user.role = 'faculty'
+  // generate id
+
+  const session = await mongoose.startSession()
+  let userData = null
+  try {
+    session.startTransaction()
+    const id = await generateFacultyId()
+    console.log(id)
+
+    // set id
+    user.id = id
+    faculty.id = id
+
+    // create faculty
+    const newFaculty = await Faculty.create([faculty], { session })
+    console.log(newFaculty)
+    if (!newFaculty.length) {
+      throw new API_Error(StatusCodes.BAD_REQUEST, 'Failed To create Faculty')
+    }
+
+    // set ref id faculty
+    user.faculty = newFaculty[0]._id
+
+    // create user
+    const newUser = await User.create([user], { session })
+    console.log(newUser)
+    if (!newUser.length) {
+      throw new API_Error(StatusCodes.BAD_REQUEST, 'Failed To create User')
+    }
+    userData = newUser[0]
+
+    // close this session
+    await session.commitTransaction()
+    await session.endSession()
+  } catch (error) {
+    console.log(error)
+    await session.abortTransaction()
+    await session.endSession()
+    throw new API_Error(StatusCodes.BAD_REQUEST, 'Transation faild!')
+  }
+
+  if (userData) {
+    userData = await User.findOne({ id: userData.id }).populate({
+      path: 'faculty',
+      populate: [{ path: 'academicFaculty' }, { path: 'academicDepartment' }],
+    })
+  }
+  return userData
+}
+
 export const UserService = {
   createStudent,
+  createFaculty,
 }
