@@ -15,7 +15,9 @@ app.use('/api/v1/', applicationRoutes)
 // testing
 app.get('/health', async (req: Request, res: Response) => {
   res.status(200).json({ message: 'sever start' })
-  // Promise.reject(new Error('Oree errorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr'))
+})
+app.get('/', async (req: Request, res: Response) => {
+  res.status(200).json({ message: 'sever start' })
 })
 
 // GLOBAL ERROR HANDLER
