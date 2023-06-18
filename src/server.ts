@@ -1,12 +1,11 @@
 import mongoose from 'mongoose'
 import app from './app'
 import config from './config'
-import { logger, errorLogger } from './shared/logger'
 import { Server } from 'http'
 let server: Server
 // // UNCAUGHT EXCEPTION ERROR HANDLE
 process.on('uncaughtException', err => {
-  errorLogger.error(err)
+  console.log(err)
   console.log('uncaught Exception is detected.......')
   process.exit(1)
 })
@@ -14,12 +13,12 @@ process.on('uncaughtException', err => {
 async function database() {
   try {
     await mongoose.connect(config.database_url as string)
-    logger.info('database connect Successfully')
+    console.log('database connect Successfully')
     server = app.listen(config.port, () => {
-      logger.info('server run successfully')
+      console.log('server run successfully')
     })
   } catch (e) {
-    errorLogger.error(e)
+    console.log(e)
   }
   // UNHANDLED PROMIC REJACTION ERROR HANDLER
   process.on('unhandledRejection', error => {
@@ -27,7 +26,7 @@ async function database() {
     if (server) {
       server.close(() => {
         console.log('close')
-        errorLogger.error(error)
+        console.log(error)
         process.exit(1)
       })
     } else {
@@ -40,7 +39,7 @@ async function database() {
 database()
 
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM Is Received')
+  console.log('SIGTERM Is Received')
   if (server) {
     server.close()
   }

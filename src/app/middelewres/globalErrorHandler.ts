@@ -4,7 +4,6 @@ import { IGenericErrorMessage } from '../interfaces/erros'
 import config from '../../config'
 import handleValidationError from '../errors/handleValidation'
 import API_Error from '../errors/ApiError'
-import { errorLogger } from '../../shared/logger'
 import { ZodError } from 'zod'
 import handleZodError from '../errors/handleZodError'
 import handleCastError from '../errors/handleCastError'
@@ -18,7 +17,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   // eslint-disable-next-line no-unused-expressions
   config.env == 'development'
     ? console.log('globalErrorHandler --', err)
-    : errorLogger.error(err)
+    : console.log(err)
 
   // handle validation error
   if (err.name == 'ValidationError') {
