@@ -6,6 +6,7 @@ export const facultySearchFiled = [
   'contact',
   'name.firstName',
   'name.lastName',
+  'contactNo',
   'name.middleName',
 ]
 

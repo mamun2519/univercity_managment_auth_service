@@ -106,8 +106,8 @@ const deleteAdminFromDB = async (id: string): Promise<IAdmin | null> => {
   const session = await mongoose.startSession()
   try {
     session.startTransaction()
-    await User.findOneAndDelete({ id })
-    await Admin.findOneAndDelete({ id })
+    await User.findOneAndDelete({ id }, { session })
+    await Admin.findOneAndDelete({ id }, { session })
     await session.commitTransaction()
     await session.endSession()
     return admin

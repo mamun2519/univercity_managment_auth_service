@@ -5,9 +5,15 @@ import globalErrorHandler from './app/middelewres/globalErrorHandler'
 
 import applicationRoutes from './app/routes'
 import { StatusCodes } from 'http-status-codes'
+import cookieParser from 'cookie-parser'
 // parser --
 const app: Application = express()
-app.use([express.json(), express.urlencoded({ extended: true }), cors()])
+app.use([
+  express.json(),
+  express.urlencoded({ extended: true }),
+  cors(),
+  cookieParser(),
+])
 
 // APPLICATION ROUTES
 app.use('/api/v1/', applicationRoutes)
